@@ -1,4 +1,5 @@
 const mongoose= require('mongoose')
+const validator= require('validator')
 const jwt= require('jsonwebtoken')
 
 const userSchema= new mongoose.Schema({
@@ -12,21 +13,33 @@ const userSchema= new mongoose.Schema({
         }
         },
     firstName:{
-        type:String,
         required:true,
+        type:String,
         trim:true,
-        unique:true
     },
     lastName:{
         type:String,
         required:true,
         trim:true
+    },
+    email:{
+         type:String,
+         required:true,
+         trim:true,
+         lowercase:true,
+         unique:true,
+        validate(value){
+            if(!validator.isEmail(value)){
+                throw new Error('Email is invalid')
+            }
+    
+        }
     },  
      address:{
          type:String,
          trim:true,
-         required:true,
-         unique:true
+         required:true
+         
      },
 
      //For 1st way: --
@@ -41,9 +54,15 @@ const userSchema= new mongoose.Schema({
     //  },
     
     //For 2nd way 
-     RoleType:{
+    //  roleType:{
+    //     type:String,
+    //     trim:true,
+    //     required:true
+    // },
+
+     role:{
         type:String,
-        trim:true,
+        enum:['user','admin'],
         required:true
     },
      
@@ -61,4 +80,5 @@ userSchema.methods.CreateAuthToken= async function(){
 }
 
 const user= mongoose.model('User',userSchema)
+user.createIndexes()
 module.exports=user
