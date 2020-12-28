@@ -60,6 +60,7 @@ const userSchema= new mongoose.Schema({
     //     required:true
     // },
 
+    //for 3rd way
      role:{
         type:String,
         enum:['user','admin'],
